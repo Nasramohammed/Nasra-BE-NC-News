@@ -1,3 +1,4 @@
+
 ## Background
 This project is a News Api made with northcoders Bootcamp as part of the back-end project. For this project i will using PostgreSQL and node-postgres.
 
@@ -19,7 +20,6 @@ You may notice that there are some additional files in this directory. You will 
 package.json and package-lock.json contain metadata about this project .
 .prettierrc and .prettierignore contain config information for a specific VSCode extension which helps with code formatting.
 .gitignore contains the names of files and directories that we specifically do not want to include in our commits.
-
 
 
 
