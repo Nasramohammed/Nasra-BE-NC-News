@@ -3,9 +3,10 @@
 const express = require("express");
 const app = express();
 const {} = require("./db/controllers/error.controllers");
-const { GetTopics } = require("./db/controllers/controllers");
+const { GetTopics,GetArticles } = require("./db/controllers/controllers");
 
 app.get("/api/topics", GetTopics);
+app.get('/api/articles' , GetArticles)
 
 
 app.all("*", (req, res, next) => {
