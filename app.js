@@ -3,11 +3,12 @@
 const express = require("express");
 const app = express();
 const {} = require("./db/controllers/error.controllers");
-const { GetTopics, getArticleById } = require("./db/controllers/controllers");
+
+const { GetTopics, getArticleById,GetArticles } = require("./db/controllers/controllers");
 
 app.get("/api/topics", GetTopics);
 app.get("/api/articles/:article_id", getArticleById);
-
+app.get('/api/articles' , GetArticles)
 app.use((err, req, res, next) => {
   if (err.code === '22P02') {
     res.status(400).send({msg:'Bad Request' })
@@ -15,6 +16,12 @@ app.use((err, req, res, next) => {
     next(err);
   }
 })
+
+
+
+
+
+
 
 
 
