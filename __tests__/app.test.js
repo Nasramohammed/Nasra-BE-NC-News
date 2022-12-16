@@ -3,6 +3,7 @@ const app = require("../app");
 const db = require("../db/connection");
 const testData = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
+require("jest-sorted");
 
 afterAll(() => {
   if (db.end) return  db.end();
@@ -86,7 +87,7 @@ describe('GET /api/articles', () => {
       .get('/api/articles')
       .expect (200)
       .then(({ body }) => {
-         const { articles } = body;
+      const { articles } = body;
         expect(articles).toHaveLength(12);
         expect(articles).toBeInstanceOf(Array);
         articles.forEach((article) => {
@@ -133,7 +134,6 @@ describe('GET /api/articles', () => {
       })
   })
 });
-
 describe('GET /api/articloos', () => {
   test("when path error returns a 404 for bad path", () => {
     return request(app)
@@ -146,6 +146,68 @@ describe('GET /api/articloos', () => {
 })
 
 
+
+describe("6.GET /api/articles/:article_id/comments", () => {
+  test("status 200: repondes with an array of comments for a given artical_id", () => {
+
+    return request(app)
+      .get(`/api/articles/1/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments.length).toBe(11);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              author: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              body: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test('status 200, respondes with sorted array according to given query', () => { 
+    return request(app)
+      .get("/api/articles/1/comments?sort_by=created_at")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toBeSortedBy('created_at', { descending: true });
+      });
+    
+  })
+  test("status 200, expect response to be an array of  sorted by given query", () => {
+    return request(app)
+      .get("/api/articles/1/comments?sort_by=votes")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toBeSortedBy("votes", { descending: true });
+      });
+  });
+});
+describe("Error Handling ", () => {
+  test("sort_by a non existing query should return 400 bad request ", () => {
+    return request(app)
+      .get("/api/articles/1/comments?sort_by=created_banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test(" path error returns a 404", () => {
+    return request(app)
+      .get("/api/articles/1/comme")
+      .expect(404)
+  })
+   test("status 400 if article_id is invalid", () => {
+     return request(app)
+       .get("/api/articles/hello/comments")
+       .expect(400);
+   });
+  
+});
 
 
 
