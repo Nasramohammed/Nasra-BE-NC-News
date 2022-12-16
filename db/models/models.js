@@ -55,8 +55,6 @@ exports.fetchArticalsByAricle_id = (article_id, sort_by = "created_at") => {
       )
       return Promise.all([comments,articles])
         .then(([commentResults,articleResults]) => {
-          console.log([articleResults], "***")
-          console.log([commentResults],"comment" )
           if (articleResults.rows.length > 0 && commentResults.rows.length >= 0) {
             return commentResults.rows;
           } else {
