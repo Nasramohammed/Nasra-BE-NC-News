@@ -7,13 +7,13 @@ const {
   GetTopics,
   getArticleById,
   GetArticles,
-  getCommentById,
+  selectCommentsByArticleId,
 } = require("./db/controllers/controllers");
 
 app.get('/api/topics', GetTopics);
 app.get('/api/articles/:article_id', getArticleById);
 app.get('/api/articles', GetArticles)
-app.get('/api/articles/:article_id/comments', getCommentById);
+app.get("/api/articles/:article_id/comments", selectCommentsByArticleId);
 
 
 

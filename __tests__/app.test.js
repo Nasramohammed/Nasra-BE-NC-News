@@ -186,8 +186,19 @@ describe("6.GET /api/articles/:article_id/comments", () => {
         expect(comments).toBeSortedBy("votes", { descending: true });
       });
   });
+  test("status 200, expect empty array where there are no comments for an existing article.", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(0);
+      });
+  });
 });
-describe("Error Handling ", () => {
+
+
+
+describe.only("Error Handling ", () => {
   test("sort_by a non existing query should return 400 bad request ", () => {
     return request(app)
       .get("/api/articles/1/comments?sort_by=created_banana")
@@ -205,6 +216,16 @@ describe("Error Handling ", () => {
      return request(app)
        .get("/api/articles/hello/comments")
        .expect(400);
+   });
+  
+   test("status 404 when given an article_id that isnt avaible yet", () => {
+     return request(app)
+       .get("/api/articles/2000/comments")
+       .expect(404)
+       .then(({ body }) => {
+         console.log(body)
+         expect(body.msg).toBe("bad request sorry");
+       });
    });
   
 });

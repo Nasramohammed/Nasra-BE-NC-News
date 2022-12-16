@@ -41,15 +41,28 @@ exports.fetchArticles = () => {
 };
 
 exports.fetchArticalsByAricle_id = (article_id, sort_by = "created_at") => {
-  return db
+  const comments =  db
     .query(
       `SELECT * FROM comments WHERE article_id = $1
       ORDER BY ${sort_by} DESC`,
       [article_id]
-)
-    .then((results) => {
-      return results.rows;
-    });
+  )
+      const articles = db
+        .query(
+          `SELECT article_id FROM articles WHERE article_id = $1
+      ORDER BY ${sort_by} DESC`,
+          [article_id]
+      )
+      return Promise.all([comments,articles])
+        .then(([commentResults,articleResults]) => {
+          console.log([articleResults], "***")
+          console.log([commentResults],"comment" )
+          if (articleResults.rows.length > 0 && commentResults.rows.length >= 0) {
+            return commentResults.rows;
+          } else {
+            return Promise.reject({ status: 404, msg: "bad request sorry" });
+          }
+        });
 };
 
 
