@@ -40,3 +40,16 @@ exports.fetchArticles = () => {
     });
 };
 
+exports.fetchArticalsByAricle_id = (article_id, sort_by = "created_at") => {
+  return db
+    .query(
+      `SELECT * FROM comments WHERE article_id = $1
+      ORDER BY ${sort_by} DESC`,
+      [article_id]
+)
+    .then((results) => {
+      return results.rows;
+    });
+};
+
+
