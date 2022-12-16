@@ -34,8 +34,9 @@ exports.GetArticles = (req, res, next) => {
     })
     .catch(next);
 };
+// Please make sure, you only send an empty array of comments when the article_id exists in the database. For this you would need to check both.
 
-exports.getCommentById = (req, res, next) => {
+exports.selectCommentsByArticleId = (req, res, next) => {
     const { article_id } = req.params;
     const { sort_by } = req.query;
     fetchArticalsByAricle_id(article_id, sort_by)
