@@ -198,7 +198,7 @@ describe("6.GET /api/articles/:article_id/comments", () => {
 
 
 
-describe.only("Error Handling ", () => {
+describe("Error Handling ", () => {
   test("sort_by a non existing query should return 400 bad request ", () => {
     return request(app)
       .get("/api/articles/1/comments?sort_by=created_banana")
@@ -223,12 +223,212 @@ describe.only("Error Handling ", () => {
        .get("/api/articles/2000/comments")
        .expect(404)
        .then(({ body }) => {
-         console.log(body)
          expect(body.msg).toBe("bad request sorry");
        });
    });
   
 });
 
+describe("7. POST /api/articles/:article_id/comments", () => {
+  // POST REQUEST 
+  test("status 201, responds with posted comment ", () => {
+    const newComment = {
+      username: "lurker",
+      body: "hello world",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            article_id: 1,
+            votes: 0,
+            author: "lurker",
+            body: "hello world",
+          })
+        );
+      });
+  });
+  test('should test types and return 201  respondes with posted comment ', () => {
+    const newComment = {
+      username: "icellusedkars",
+      body: "hello world",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            article_id: expect.any(Number),
+            votes: expect.any(Number),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+          })
+        );
+      });
+  });
+  test('status:201, ignores any added extra properties.', () => {
+    const path = '/api/articles/9/comments';
+    return request(app)
+      .post(path)
+      .send({
+        username: 'lurker',
+        body: 'hello world',
+        newComment: 2,
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            article_id: 9,
+            author: 'lurker',
+            body: 'hello world',
+          }),
+        );
+      });
+  });
+});
 
+describe('Error handling ', () => { 
+  it('status:404, error when given an a article id which does not exist in the database yet.', () => {
+      return request(app)
+        .post('/api/articles/100/comments')
+        .send({ username: 'lurker', body: 'newest comment added' })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toEqual('bad request sorry');
+        });
+    });
+    it('status:400, error when passed an article_id that doesnt exist or is invalid.', () => {
+      return request(app)
+        .post('/api/articles/hello_world/comments')
+        .send({ username: 'rogersop', body: 'my type of thing to read ' })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual('Bad Request');
+        });
+    });
+
+    it('status:400, when forgot to pass a body or pass an empty body.', () => {
+      return request(app)
+        .post('/api/articles/9/comments')
+        .send({})
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual('Bad Request');
+        });
+    });
+
+    // it('status:400, error when passed a body with incorrect value or type.', () => {
+    //   return request(app)
+    //     .post('/api/articles/9/comments')
+    //     .send({ username: 'lurker', body: 100 })
+    //     .expect(400)
+    //     .then(({ body }) => {
+    //       expect(body.msg).toEqual('Bad Request');
+    //     });
+    // });
+    it('status:400, error when passed an incorrect key.', () => {
+      return request(app)
+        .post('/api/articles/8/comments')
+        .send({ dog: 'lurker', body: 'last comment i swear' })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toEqual('Bad Request');
+        });
+    });
+  });
+
+describe.only('PATCH /api/articles/:article_id', () => {
+  it('status:200, patches the article with article_id specified with an updated vote count, returning the updated article.', () => {
+    return request(app)
+      .patch('/api/articles/1')
+      .send({ inc_votes: -25 })
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body, "test body")
+        expect(body.article).toEqual(
+          
+          expect.objectContaining({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: 1,
+            body: expect.any(String),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: 75,
+          }),
+        );
+      });
+  });
+})
+
+
+// error handling patch request 
+
+
+
+
+
+describe('GET /api/users', () => {
+  // GET USERS
+  test(" should return status 200 and an array of users objects", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toHaveLength(4);
+        expect(users).toBeInstanceOf(Array);
+        users.forEach((user) => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test("should return 404 error for bad path", () => {
+    return request(app)
+      .get("/api/userrs ")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request sorry");
+      });
+  });
+})
+
+
+describe('DELETE /api/comments/:comment_id', () => {
+    // DELETE REQUEST 
+    it('204: deletes specified comment', () => {
+      return request(app)
+        .delete('/api/comments/2')
+        .expect(204);
+    });
+    it('404: error when passed a valid ID that is missing in the db', () => {
+      return request(app)
+        .delete('/api/comments/10000')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request sorry");
+        });
+    });
+    it('400: error when passed invalid id', () => {
+      return request(app)
+        .delete('/api/comments/badId')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+  });
 

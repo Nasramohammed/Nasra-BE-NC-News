@@ -4,6 +4,10 @@ const {
   selectArticleById,
   fetchArticles,
   fetchArticalsByAricle_id,
+  insertComment,
+  updateArticle,
+  fetchUsers,
+  dropCommentById,
 } = require("../models/models.js");
 
 
@@ -34,7 +38,7 @@ exports.GetArticles = (req, res, next) => {
     })
     .catch(next);
 };
-// Please make sure, you only send an empty array of comments when the article_id exists in the database. For this you would need to check both.
+
 
 exports.selectCommentsByArticleId = (req, res, next) => {
     const { article_id } = req.params;
@@ -46,3 +50,45 @@ exports.selectCommentsByArticleId = (req, res, next) => {
       .catch(next);
 };
 
+// post
+exports.postComment = (req, res, next) => {
+    // console.log(req.body,"****")
+  const { article_id } = req.params;
+    const { username, body } = req.body;
+  insertComment(article_id,username,body)
+      .then((comment) => {
+      res.status(201).send({comment});
+    })
+    .catch(next);
+};
+
+// patch 
+  
+exports.patchArticle = (req, res, next) => {
+  console.log(req.params.article_id,req.body)
+  updateArticle(req.params.article_id, req.body,"****")
+    .then((updatedArticle) => {
+      console.log(updatedArticle,"updated article ")
+      res.status(200).send({ article: updatedArticle[0] });
+    })
+    .catch(next);
+};
+
+// Get users 
+exports.getUsers = (req, res, next) => {
+ fetchUsers()
+    .then((users) => {
+      res.status(200).send({ users });
+    })
+    .catch(next);
+};
+
+// DELETE 
+exports.deleteCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  dropCommentById(comment_id)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch(next);
+};
