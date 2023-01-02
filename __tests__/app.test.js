@@ -344,14 +344,13 @@ describe('Error handling ', () => {
     });
   });
 
-describe.only('PATCH /api/articles/:article_id', () => {
+describe('PATCH /api/articles/:article_id', () => {
   it('status:200, patches the article with article_id specified with an updated vote count, returning the updated article.', () => {
     return request(app)
       .patch('/api/articles/1')
       .send({ inc_votes: -25 })
       .expect(200)
       .then(({ body }) => {
-        console.log(body, "test body")
         expect(body.article).toEqual(
           
           expect.objectContaining({
