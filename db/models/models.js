@@ -77,9 +77,7 @@ exports.insertComment = (article_id, username, body) => {
 
 // patch 
 exports.updateArticle = (articleID, body) => {
-  console.log(articleID,body,"model")
   const { inc_votes } = body;
-  console.log( inc_votes,"type of inc-votes", typeof inc_votes)
  return db
    .query(
      `UPDATE articles SET 

@@ -65,10 +65,8 @@ exports.postComment = (req, res, next) => {
 // patch 
   
 exports.patchArticle = (req, res, next) => {
-  console.log(req.params.article_id,req.body)
   updateArticle(req.params.article_id, req.body,"****")
     .then((updatedArticle) => {
-      console.log(updatedArticle,"updated article ")
       res.status(200).send({ article: updatedArticle[0] });
     })
     .catch(next);
