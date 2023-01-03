@@ -294,7 +294,7 @@ describe("7. POST /api/articles/:article_id/comments", () => {
   });
 });
 
-describe('Error handling ', () => { 
+describe.only('Error handling ', () => { 
   it('status:404, error when given an a article id which does not exist in the database yet.', () => {
       return request(app)
         .post('/api/articles/100/comments')
@@ -324,15 +324,16 @@ describe('Error handling ', () => {
         });
     });
 
-    // it('status:400, error when passed a body with incorrect value or type.', () => {
-    //   return request(app)
-    //     .post('/api/articles/9/comments')
-    //     .send({ username: 'lurker', body: 100 })
-    //     .expect(400)
-    //     .then(({ body }) => {
-    //       expect(body.msg).toEqual('Bad Request');
-    //     });
-    // });
+    it('status:400, error when passed a body with incorrect value or type.', () => {
+      return request(app)
+        .post('/api/articles/9/comments')
+        .send({ username: 'lurker', body: 100 })
+        .expect(400)
+        .then(({ body }) => {
+          console.log(body,"*****")
+          expect(body.msg).toEqual('Bad Request');
+        });
+    });
     it('status:400, error when passed an incorrect key.', () => {
       return request(app)
         .post('/api/articles/8/comments')
@@ -365,63 +366,7 @@ describe('PATCH /api/articles/:article_id', () => {
         );
       });
   });
-  // test('status:200, ignores extra properties.', () => {
-  //     return request(app)
-  //       .patch('/api/comments/1')
-  //       .send({ inc_votes: -25, extraProp: false })
-  //       .expect(200)
-  //       .then(({ body }) => {
-  //         expect(body.comment).toEqual(
-  //           expect.objectContaining({
-  //             comment_id: 1,
-  //             body: expect.any(String),
-  //             belongs_to: expect.any(String),
-  //             created_by: expect.any(String),
-  //             votes: -9,
-  //             created_at: expect.any(String),
-  //           }),
-  //         );
-  //       });
-  //   });
-
-  //   test('status:400, error when passed a value with incorrect type.', () => {
-  //     return request(app)
-  //       .patch('/api/comments/1')
-  //       .send({ inc_votes: 'dog' })
-  //       .expect(400)
-  //       .then(({ body }) => {
-  //         expect(body.msg).toEqual('Bad request: malformed body');
-  //       });
-  //   });
-  //   test('status:400, error when missing inc_votes key.', () => {
-  //     return request(app)
-  //       .patch('/api/comments/1')
-  //       .send({ dog: -25 })
-  //       .expect(400)
-  //       .then(({ body }) => {
-  //         expect(body.msg).toEqual('Bad request: malformed body');
-  //       });
-  //   });
-
-  //   test('status:404, error when passed an article id which does not exist in the database.', () => {
-  //     return request(app)
-  //       .patch('/api/comments/99999')
-  //       .send({ inc_votes: -25 })
-  //       .expect(404)
-  //       .then(({ body }) => {
-  //         expect(body.msg).toEqual('Comment with ID 99999 not found.');
-  //       });
-  //   });
-  //   test('status:400, error when passed an invalid ID.', () => {
-  //     return request(app)
-  //       .patch('/api/comments/notAnId')
-  //       .send({ inc_votes: -25 })
-  //       .expect(400)
-  //       .then(({ body }) => {
-  //         expect(body.msg).toEqual('Invalid ID');
-  //       });
-  //   });
-  // });
+  
 })
 
 

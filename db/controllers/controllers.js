@@ -54,7 +54,10 @@ exports.selectCommentsByArticleId = (req, res, next) => {
 exports.postComment = (req, res, next) => {
     // console.log(req.body,"****")
   const { article_id } = req.params;
-    const { username, body } = req.body;
+  const { username, body } = req.body;
+  if (typeof req.body.body !== 'string') {
+    return res.status(400).send({ status: 400, msg: "Bad Request" });
+  }
   insertComment(article_id,username,body)
       .then((comment) => {
       res.status(201).send({comment});
