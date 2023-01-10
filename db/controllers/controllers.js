@@ -52,7 +52,6 @@ exports.selectCommentsByArticleId = (req, res, next) => {
 
 // post
 exports.postComment = (req, res, next) => {
-    // console.log(req.body,"****")
   const { article_id } = req.params;
   const { username, body } = req.body;
   if (typeof req.body.body !== 'string') {
