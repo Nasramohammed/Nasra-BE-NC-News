@@ -66,7 +66,6 @@ exports.fetchArticalsByAricle_id = (article_id, sort_by = "created_at") => {
 // post
 
 exports.insertComment = (article_id, username, body) => {
-  // console.log(article_id, username, body);
   return db
     .query(
       `INSERT  INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING *;`,

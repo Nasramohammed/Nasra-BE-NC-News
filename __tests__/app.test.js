@@ -330,7 +330,6 @@ describe.only('Error handling ', () => {
         .send({ username: 'lurker', body: 100 })
         .expect(400)
         .then(({ body }) => {
-          console.log(body,"*****")
           expect(body.msg).toEqual('Bad Request');
         });
     });
