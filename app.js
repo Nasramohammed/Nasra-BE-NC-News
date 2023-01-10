@@ -14,7 +14,7 @@ const {
   deleteCommentById,
 } = require("./db/controllers/controllers");
 const cors = require("cors");
-
+app.use(cors());
 app.use(express.json())
 
 app.get('/api/topics', GetTopics);
@@ -27,7 +27,7 @@ app.post("/api/articles/:article_id/comments", postComment);
 app.patch("/api/articles/:article_id", patchArticle);
 app.delete("/api/comments/:comment_id", deleteCommentById);
 
-app.use(cors());
+
 
 app.use((err, req, res, next) => {
   if (
